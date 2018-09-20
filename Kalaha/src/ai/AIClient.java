@@ -212,7 +212,13 @@ public class AIClient implements Runnable
      */
     public int getMove(GameState currentBoard)
     {
-        int myMove = getRandom();
+        GameState clone=currentBoard.clone();
+        int myMove = DFS(clone,0,true,-999,999,0);
+        
+        
+        
+        
+        
         return myMove;
     }
     
@@ -226,4 +232,134 @@ public class AIClient implements Runnable
     {
         return 1 + (int)(Math.random() * 6);
     }
+    
+    
+    
+    
+    public int DFS(GameState clone,int depth, boolean maxPlayer, int max, int min, int decision)
+    {
+        
+        
+        if(depth==5)
+        {
+            return decision;
+        }
+        if(maxPlayer)
+        {
+            depth+=1;
+            int best= min;
+            for(int i=1; i<7; i++)
+            {
+                if(clone.moveIsPossible(i))
+                {
+                    
+                    int score = DFS(clone,depth,false,max,min,decision);
+                    if(score>best)
+                    {
+                        best=score;
+                        if(depth==0)
+                        {
+                            decision=i;
+                        }
+                    }
+                    
+                    
+                }
+            }
+            return best;
+        }
+        else
+        {
+            depth+=1;
+            int best=max;
+            for(int i=1; i<7; i++)
+            {
+                if(clone.moveIsPossible(i))
+                {
+                    
+                    int score = DFS(clone,depth++,true,max,min,decision);
+                    if(score<best)
+                    {
+                        best=score;
+                    }
+                    
+                    
+                }
+            }
+            return best;
+            
+        }
+      
+       
+    }
+//    public int iterativDeephningSearch(GameState clone, int finalScore, int depth)
+//    {
+////        long startTime=System.currentTimeMillis();
+////        long tot = System.currentTimeMillis() - startTime; // determing time passed 
+////        double e = (double)tot / (double)1000;   // determing time passed
+////        
+////        if(e>=time || (clone.getNoValidMoves(player)==0))
+////        {
+////            return finalScore;
+////        }
+//        
+//        
+//        for(int i=0; i<depth;i++)
+//        {
+//            
+//            GameState clone2= clone.clone();
+//            if(clone2.moveIsPossible(i))
+//            {
+//                int score=iterativDeephningSearch(clone2,0,depth);
+//                if(score>finalScore)
+//                {
+//                    finalScore=score;
+//                    
+//                }
+//                
+//            }
+//            
+//        }
+//        
+//        
+//        return finalScore;
+//    }
+//    public int miniMaxSearch(GameState currentBoard,boolean maxPlayer,int alpha,int beta, long time, int max, int min)
+//    {
+//        int move=1;
+//        GameState clone= currentBoard.clone();
+//        long tot = System.currentTimeMillis() - time; // determing time passed 
+//        double e = (double)tot / (double)1000;   // determing time passed
+//        
+//        if(e>=5000) //stopp condision 5 sec
+//        {
+//           return move; 
+//        }
+//        
+//        if(maxPlayer) //looking for maxvalue
+//        {
+//            int bestScore=min;
+//            for(int i = 1; i < 7; i++)
+//            {
+//                clone.makeMove(i);
+//                int val =miniMaxSearch(clone,false,alpha,beta,time, max, min);
+//                if()
+//                {
+//                    bestScore=val;
+//                }
+//                if(alpha>bestScore)
+//                {
+//                    bestScore=alpha;
+//                }
+//            }
+//            
+//        }
+//           
+//            
+//            tot = System.currentTimeMillis() - startT;
+//            e = (double)tot / (double)1000; 
+//        
+//        
+//        return move;
+//    }
 }
