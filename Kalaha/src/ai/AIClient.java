@@ -213,13 +213,15 @@ public class AIClient implements Runnable
     public int getMove(GameState currentBoard)
     {
         GameState clone=currentBoard.clone();
-        int myMove = DFS(clone,0,true,-999,999,0);
+        int alpha[]={-999,0};
+        int beta[]={999,0};
+        int[] myMove =miniMaxAlgorithm(clone,0,true,0,alpha,beta);
         
         
         
         
         
-        return myMove;
+        return myMove[1];
     }
     
     /**
@@ -234,132 +236,67 @@ public class AIClient implements Runnable
     }
     
     
-    
-    
-    public int DFS(GameState clone,int depth, boolean maxPlayer, int max, int min, int decision)
+    public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int move,int [] alpha, int [] beta )
     {
         
-        
-        if(depth==5)
+        if(deep==5||clone.gameEnded())
         {
-            return decision;
+            int retVal[]= new int [2];
+            retVal[0]=clone.getScore(player);
+            retVal[1]= move;
+            return retVal;
+        }
+       
+        GameState allStates[]= new GameState[6];
+        for(int i=0; i<6; i++)
+        {
+            allStates[i]=clone.clone();
+            
         }
         if(maxPlayer)
         {
-            depth+=1;
-            int best= min;
-            for(int i=1; i<7; i++)
+            for(int i=0; i<6;i++)
             {
-                if(clone.moveIsPossible(i))
+                
+                if(allStates[i].moveIsPossible(i+1))
                 {
-                    
-                    int score = DFS(clone,depth,false,max,min,decision);
-                    if(score>best)
+                    allStates[i].makeMove(i+1);
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,false,i+1,alpha, beta);
+                    if(nextMove[0]>alpha[0]);
                     {
-                        best=score;
-                        if(depth==0)
-                        {
-                            decision=i;
-                        }
+                        alpha[0]=nextMove[0];
+                        alpha[1]=i+1;
                     }
-                    
-                    
                 }
+                if(alpha[0]>=beta[0])
+                    break;
+                    
             }
-            return best;
-        }
-        else
-        {
-            depth+=1;
-            int best=max;
-            for(int i=1; i<7; i++)
-            {
-                if(clone.moveIsPossible(i))
-                {
-                    
-                    int score = DFS(clone,depth++,true,max,min,decision);
-                    if(score<best)
-                    {
-                        best=score;
-                    }
-                    
-                    
-                }
-            }
-            return best;
+            return alpha;
             
         }
-      
-       
+        
+        else
+        {
+            int minScore[]={999,0};
+            for(int i=0; i<6;i++)
+            {
+                
+                if(allStates[i].moveIsPossible(i+1))
+                {
+                    allStates[i].makeMove(i+1);
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,true,i+1, alpha, beta);
+                    if(nextMove[0]<minScore[0]);
+                    {
+                        minScore[0]=nextMove[0];
+                        minScore[1]=i+1;
+                    }
+                }
+                if(alpha[0]>=beta[0])
+                    break;
+                    
+            }
+            return minScore;
+        }
     }
-//    public int iterativDeephningSearch(GameState clone, int finalScore, int depth)
-//    {
-////        long startTime=System.currentTimeMillis();
-////        long tot = System.currentTimeMillis() - startTime; // determing time passed 
-////        double e = (double)tot / (double)1000;   // determing time passed
-////        
-////        if(e>=time || (clone.getNoValidMoves(player)==0))
-////        {
-////            return finalScore;
-////        }
-//        
-//        
-//        for(int i=0; i<depth;i++)
-//        {
-//            
-//            GameState clone2= clone.clone();
-//            if(clone2.moveIsPossible(i))
-//            {
-//                int score=iterativDeephningSearch(clone2,0,depth);
-//                if(score>finalScore)
-//                {
-//                    finalScore=score;
-//                    
-//                }
-//                
-//            }
-//            
-//        }
-//        
-//        
-//        return finalScore;
-//    }
-//    public int miniMaxSearch(GameState currentBoard,boolean maxPlayer,int alpha,int beta, long time, int max, int min)
-//    {
-//        int move=1;
-//        GameState clone= currentBoard.clone();
-//        long tot = System.currentTimeMillis() - time; // determing time passed 
-//        double e = (double)tot / (double)1000;   // determing time passed
-//        
-//        if(e>=5000) //stopp condision 5 sec
-//        {
-//           return move; 
-//        }
-//        
-//        if(maxPlayer) //looking for maxvalue
-//        {
-//            int bestScore=min;
-//            for(int i = 1; i < 7; i++)
-//            {
-//                clone.makeMove(i);
-//                int val =miniMaxSearch(clone,false,alpha,beta,time, max, min);
-//                if()
-//                {
-//                    bestScore=val;
-//                }
-//                if(alpha>bestScore)
-//                {
-//                    bestScore=alpha;
-//                }
-//            }
-//            
-//        }
-//           
-//            
-//            tot = System.currentTimeMillis() - startT;
-//            e = (double)tot / (double)1000; 
-//        
-//        
-//        return move;
-//    }
 }
