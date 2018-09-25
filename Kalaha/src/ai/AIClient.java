@@ -212,16 +212,33 @@ public class AIClient implements Runnable
      */
     public int getMove(GameState currentBoard)
     {
-        GameState clone=currentBoard.clone();
-        int alpha[]={-999,0};
-        int beta[]={999,0};
-        int[] myMove =miniMaxAlgorithm(clone,0,true,0,alpha,beta);
+        long startT = System.currentTimeMillis();
+        long tot = System.currentTimeMillis() - startT;
+        double e = (double)tot / (double)1000;
+        int maxDepth=1;
+        int[] retMove= new int[3];
         
+        while(e<5)
+        {
+            GameState clone=currentBoard.clone();
+            int alpha[]={-999,0,1};
+            int beta[]={999,0,1};
+            int [] myMove =miniMaxAlgorithm(clone,0,true,0,alpha,beta,maxDepth,startT);
+            
+            
+            
+            if(myMove[2]==1)
+            {
+                retMove=myMove;
+                maxDepth+=1;
+            }
+            
+            tot = System.currentTimeMillis() - startT;
+            e = (double)tot / (double)1000;
         
+        }
         
-        
-        
-        return myMove[1];
+        return retMove[1];
     }
     
     /**
@@ -236,15 +253,90 @@ public class AIClient implements Runnable
     }
     
     
-    public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int move,int [] alpha, int [] beta )
+//    public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int move,int [] alpha, int [] beta )
+//    {
+//        
+//        if(deep==5||clone.gameEnded())
+//        {
+//            int retVal[]= new int [2];
+//            retVal[0]=clone.getScore(player);
+//            retVal[1]= move;
+//            return retVal;
+//        }
+//       
+//        GameState allStates[]= new GameState[6];
+//        for(int i=0; i<6; i++)
+//        {
+//            allStates[i]=clone.clone();
+//            
+//        }
+//        if(maxPlayer)
+//        {
+//            for(int i=0; i<6;i++)
+//            {
+//                
+//                if(allStates[i].moveIsPossible(i+1))
+//                {
+//                    allStates[i].makeMove(i+1);
+//                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,false,i+1,alpha, beta);
+//                    if(nextMove[0]>alpha[0]);
+//                    {
+//                        alpha[0]=nextMove[0];
+//                        alpha[1]=i+1;
+//                    }
+//                }
+//                if(alpha[0]>=beta[0])
+//                    break;
+//                    
+//            }
+//            return alpha;
+//            
+//        }
+//        
+//        else
+//        {
+//            int minScore[]={999,0};
+//            for(int i=0; i<6;i++)
+//            {
+//                
+//                if(allStates[i].moveIsPossible(i+1))
+//                {
+//                    allStates[i].makeMove(i+1);
+//                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,true,i+1, alpha, beta);
+//                    if(nextMove[0]<minScore[0]);
+//                    {
+//                        minScore[0]=nextMove[0];
+//                        minScore[1]=i+1;
+//                    }
+//                }
+//                if(alpha[0]>=beta[0])
+//                    break;
+//                    
+//            }
+//            return minScore;
+//        }
+//    }
+
+public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int move,int [] alpha, int [] beta, int maxDepth,long startT )
     {
         
-        if(deep==5||clone.gameEnded())
+        if(deep==maxDepth||clone.gameEnded())
         {
-            int retVal[]= new int [2];
+            int retVal[]= new int [3];
             retVal[0]=clone.getScore(player);
             retVal[1]= move;
+            retVal[2]=1;
             return retVal;
+        }
+        long tot = System.currentTimeMillis() - startT;
+        double e = (double)tot / (double)1000;
+        if(e>5)
+        {
+             int retVal[]= new int [3];
+             retVal[0]=clone.getScore(player);
+             retVal[1]=move;
+             retVal[2]=0;
+             return retVal;
         }
        
         GameState allStates[]= new GameState[6];
@@ -261,14 +353,20 @@ public class AIClient implements Runnable
                 if(allStates[i].moveIsPossible(i+1))
                 {
                     allStates[i].makeMove(i+1);
-                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,false,i+1,alpha, beta);
+                    maxPlayer = allStates[i].getNextPlayer()==player;
+                    
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,i+1,alpha, beta,maxDepth,startT);
                     if(nextMove[0]>alpha[0]);
                     {
                         alpha[0]=nextMove[0];
                         alpha[1]=i+1;
+                        alpha[2]=nextMove[2];
                     }
                 }
                 if(alpha[0]>=beta[0])
+                    break;
+                
+                if(alpha[2]==0)
                     break;
                     
             }
@@ -278,25 +376,33 @@ public class AIClient implements Runnable
         
         else
         {
-            int minScore[]={999,0};
             for(int i=0; i<6;i++)
             {
                 
                 if(allStates[i].moveIsPossible(i+1))
                 {
                     allStates[i].makeMove(i+1);
-                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,true,i+1, alpha, beta);
-                    if(nextMove[0]<minScore[0]);
+                    
+                    maxPlayer = allStates[i].getNextPlayer()==player;
+                    
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,i+1, alpha, beta,maxDepth,startT);
+                    
+                    if(nextMove[0]<beta[0]);
                     {
-                        minScore[0]=nextMove[0];
-                        minScore[1]=i+1;
+                        beta[0]=nextMove[0];
+                        beta[1]=i+1;
+                        beta[2]=nextMove[2];
                     }
                 }
                 if(alpha[0]>=beta[0])
                     break;
+                
+                if(beta[2]==0)
+                    break;
                     
             }
-            return minScore;
+            return beta;
         }
     }
+
 }
