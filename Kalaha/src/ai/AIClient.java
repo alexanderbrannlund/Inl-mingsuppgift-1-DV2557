@@ -330,6 +330,7 @@ public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int mo
         }
         long tot = System.currentTimeMillis() - startT;
         double e = (double)tot / (double)1000;
+        
         if(e>5)
         {
              int retVal[]= new int [3];
@@ -349,17 +350,18 @@ public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int mo
         {
             for(int i=0; i<6;i++)
             {
+                int ambo=i+1;
                 
-                if(allStates[i].moveIsPossible(i+1))
+                if(allStates[i].moveIsPossible(ambo))
                 {
-                    allStates[i].makeMove(i+1);
+                    allStates[i].makeMove(ambo);
                     maxPlayer = allStates[i].getNextPlayer()==player;
                     
-                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,i+1,alpha, beta,maxDepth,startT);
-                    if(nextMove[0]>alpha[0]);
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,ambo,alpha, beta,maxDepth,startT);
+                    if(nextMove[0]>alpha[0])
                     {
                         alpha[0]=nextMove[0];
-                        alpha[1]=i+1;
+                        alpha[1]=ambo;
                         alpha[2]=nextMove[2];
                     }
                 }
@@ -378,19 +380,20 @@ public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int mo
         {
             for(int i=0; i<6;i++)
             {
+                int ambo=i+1;
                 
-                if(allStates[i].moveIsPossible(i+1))
+                if(allStates[i].moveIsPossible(ambo))
                 {
-                    allStates[i].makeMove(i+1);
+                    allStates[i].makeMove(ambo);
                     
                     maxPlayer = allStates[i].getNextPlayer()==player;
                     
-                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,i+1, alpha, beta,maxDepth,startT);
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,ambo, alpha, beta,maxDepth,startT);
                     
-                    if(nextMove[0]<beta[0]);
+                    if(nextMove[0]<beta[0])
                     {
                         beta[0]=nextMove[0];
-                        beta[1]=i+1;
+                        beta[1]=ambo;
                         beta[2]=nextMove[2];
                     }
                 }
