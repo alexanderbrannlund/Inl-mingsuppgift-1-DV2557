@@ -350,18 +350,18 @@ public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int mo
         {
             for(int i=0; i<6;i++)
             {
-                int ambo=i+1;
                 
-                if(allStates[i].moveIsPossible(ambo))
+                
+                if(allStates[i].moveIsPossible(i+1))
                 {
-                    allStates[i].makeMove(ambo);
+                    allStates[i].makeMove(i+1);
                     maxPlayer = allStates[i].getNextPlayer()==player;
                     
-                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,ambo,alpha, beta,maxDepth,startT);
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,i+1,alpha, beta,maxDepth,startT);
                     if(nextMove[0]>alpha[0])
                     {
                         alpha[0]=nextMove[0];
-                        alpha[1]=ambo;
+                        alpha[1]=nextMove[1];
                         alpha[2]=nextMove[2];
                     }
                 }
@@ -380,20 +380,20 @@ public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int mo
         {
             for(int i=0; i<6;i++)
             {
-                int ambo=i+1;
                 
-                if(allStates[i].moveIsPossible(ambo))
+                
+                if(allStates[i].moveIsPossible(i+1))
                 {
-                    allStates[i].makeMove(ambo);
+                    allStates[i].makeMove(i+1);
                     
                     maxPlayer = allStates[i].getNextPlayer()==player;
                     
-                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,ambo, alpha, beta,maxDepth,startT);
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,i+1, alpha, beta,maxDepth,startT);
                     
                     if(nextMove[0]<beta[0])
                     {
                         beta[0]=nextMove[0];
-                        beta[1]=ambo;
+                        beta[1]=nextMove[1];
                         beta[2]=nextMove[2];
                     }
                 }
