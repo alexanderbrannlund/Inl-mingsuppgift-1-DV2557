@@ -232,7 +232,7 @@ public class AIClient implements Runnable
                 retMove[0]=myMove[0];
                 retMove[1]=myMove[1];
                 retMove[2]=myMove[2];
-                maxDepth+=1;            // ökar maxdjupet för sökningen 
+                maxDepth++;            // ökar maxdjupet för sökningen 
             }
             
             tot = System.currentTimeMillis() - startT; // kollar tiden 
@@ -353,14 +353,17 @@ public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int mo
         {
             for(int i=0; i<6;i++)           // för alla noder 
             {
-                
+                if(deep==0)
+                {
+                    move=i+1;
+                }
                 
                 if(allStates[i].moveIsPossible(i+1))            // om nästa steg är ett möjligt steg 
                 {
                     allStates[i].makeMove(i+1);
                     maxPlayer = allStates[i].getNextPlayer()==player;       // kontrollera vems tur det är 
                     
-                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,i+1,alpha, beta,maxDepth,startT); // rekursivt anrop
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,move,alpha, beta,maxDepth,startT); // rekursivt anrop
                     if(nextMove[0]>alpha[0])        // om scoren är högre än alphas score 
                     {
                         alpha[0]=nextMove[0];       // uppdatera alpha med de nya väderna 
@@ -391,7 +394,7 @@ public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int mo
                     
                     maxPlayer = allStates[i].getNextPlayer()==player;
                     
-                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,i+1, alpha, beta,maxDepth,startT);
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,move, alpha, beta,maxDepth,startT);
                     
                     if(nextMove[0]<beta[0])
                     {
