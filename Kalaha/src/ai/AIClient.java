@@ -218,27 +218,29 @@ public class AIClient implements Runnable
         int maxDepth=1;
         int[] retMove= new int[3];
         
-        while(e<5)
+        while(e<5) // loopar sålänge inte tiden går över 5 sekunder
         {
-            GameState clone=currentBoard.clone();
-            int alpha[]={-999,0,1};
+            GameState clone=currentBoard.clone();                 // skapar klon
+            int alpha[]={-999,0,1};                               //Skapar alpha och beta variabler 
             int beta[]={999,0,1};
-            int [] myMove =miniMaxAlgorithm(clone,0,true,0,alpha,beta,maxDepth,startT);
+            int [] myMove =miniMaxAlgorithm(clone,0,true,0,alpha,beta,maxDepth,startT);  // Anropar minimax algoritmen
             
             
             
-            if(myMove[2]==1)
+            if(myMove[2]==1)            //Sparar endast värden där alla löv i angivet djup är besökta 
             {
-                retMove=myMove;
-                maxDepth+=1;
+                retMove[0]=myMove[0];
+                retMove[1]=myMove[1];
+                retMove[2]=myMove[2];
+                maxDepth+=1;            // ökar maxdjupet för sökningen 
             }
             
-            tot = System.currentTimeMillis() - startT;
+            tot = System.currentTimeMillis() - startT; // kollar tiden 
             e = (double)tot / (double)1000;
         
         }
         
-        return retMove[1];
+        return retMove[1]; // returnerar det bästa draget
     }
     
     /**
@@ -320,63 +322,64 @@ public class AIClient implements Runnable
 public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int move,int [] alpha, int [] beta, int maxDepth,long startT )
     {
         
-        if(deep==maxDepth||clone.gameEnded())
+        if(deep==maxDepth||clone.gameEnded())           //Stopcondision 1: om sökningen har nått maxdjupet eller att spelet är över 
         {
             int retVal[]= new int [3];
-            retVal[0]=clone.getScore(player);
-            retVal[1]= move;
-            retVal[2]=1;
+            retVal[0]=clone.getScore(player);           // returnerar AIs poäng
+            retVal[1]= move;                            // returnerar vilket drag som gav poängen
+            retVal[2]=1;                                // sökningen stannar på stopcondision 1
             return retVal;
         }
+        
         long tot = System.currentTimeMillis() - startT;
         double e = (double)tot / (double)1000;
         
-        if(e>5)
+        if(e>5)                                         //Om tiden har överstidigit 5 sekunder
         {
-             int retVal[]= new int [3];
+             int retVal[]= new int [3];                 //Samma som stopcondision 1
              retVal[0]=clone.getScore(player);
              retVal[1]=move;
-             retVal[2]=0;
+             retVal[2]=0;                               // sökningen stannade på stopcondision 2 
              return retVal;
         }
        
-        GameState allStates[]= new GameState[6];
+        GameState allStates[]= new GameState[6];    // skapar en arry av gamestates
         for(int i=0; i<6; i++)
         {
-            allStates[i]=clone.clone();
+            allStates[i]=clone.clone();             //clonar gameStatet 
             
         }
-        if(maxPlayer)
+        if(maxPlayer)                       //om det är Maxplayers tur
         {
-            for(int i=0; i<6;i++)
+            for(int i=0; i<6;i++)           // för alla noder 
             {
                 
                 
-                if(allStates[i].moveIsPossible(i+1))
+                if(allStates[i].moveIsPossible(i+1))            // om nästa steg är ett möjligt steg 
                 {
                     allStates[i].makeMove(i+1);
-                    maxPlayer = allStates[i].getNextPlayer()==player;
+                    maxPlayer = allStates[i].getNextPlayer()==player;       // kontrollera vems tur det är 
                     
-                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,i+1,alpha, beta,maxDepth,startT);
-                    if(nextMove[0]>alpha[0])
+                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,maxPlayer,i+1,alpha, beta,maxDepth,startT); // rekursivt anrop
+                    if(nextMove[0]>alpha[0])        // om scoren är högre än alphas score 
                     {
-                        alpha[0]=nextMove[0];
+                        alpha[0]=nextMove[0];       // uppdatera alpha med de nya väderna 
                         alpha[1]=nextMove[1];
                         alpha[2]=nextMove[2];
                     }
                 }
-                if(alpha[0]>=beta[0])
+                if(alpha[0]>=beta[0])               // alpha/ beta prunning 
                     break;
                 
-                if(alpha[2]==0)
+                if(alpha[2]==0)                     // om stopcondision 2, avbryt loppen
                     break;
                     
             }
-            return alpha;
+            return alpha;                          // returnerar det bästa vädet 
             
         }
         
-        else
+        else                                    // samma steg som ovan fast för minPlayer
         {
             for(int i=0; i<6;i++)
             {
