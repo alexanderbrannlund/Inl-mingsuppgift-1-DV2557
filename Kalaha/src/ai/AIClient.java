@@ -210,7 +210,7 @@ public class AIClient implements Runnable
      * @param currentBoard The current board state
      * @return Move to make (1-6)
      */
-    public int getMove(GameState currentBoard)
+    public int getMove(GameState currentBoard)  //Satsar på B i betyg
     {
         long startT = System.currentTimeMillis();
         long tot = System.currentTimeMillis() - startT;
@@ -254,72 +254,8 @@ public class AIClient implements Runnable
         return 1 + (int)(Math.random() * 6);
     }
     
-    
-//    public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int move,int [] alpha, int [] beta )
-//    {
-//        
-//        if(deep==5||clone.gameEnded())
-//        {
-//            int retVal[]= new int [2];
-//            retVal[0]=clone.getScore(player);
-//            retVal[1]= move;
-//            return retVal;
-//        }
-//       
-//        GameState allStates[]= new GameState[6];
-//        for(int i=0; i<6; i++)
-//        {
-//            allStates[i]=clone.clone();
-//            
-//        }
-//        if(maxPlayer)
-//        {
-//            for(int i=0; i<6;i++)
-//            {
-//                
-//                if(allStates[i].moveIsPossible(i+1))
-//                {
-//                    allStates[i].makeMove(i+1);
-//                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,false,i+1,alpha, beta);
-//                    if(nextMove[0]>alpha[0]);
-//                    {
-//                        alpha[0]=nextMove[0];
-//                        alpha[1]=i+1;
-//                    }
-//                }
-//                if(alpha[0]>=beta[0])
-//                    break;
-//                    
-//            }
-//            return alpha;
-//            
-//        }
-//        
-//        else
-//        {
-//            int minScore[]={999,0};
-//            for(int i=0; i<6;i++)
-//            {
-//                
-//                if(allStates[i].moveIsPossible(i+1))
-//                {
-//                    allStates[i].makeMove(i+1);
-//                    int nextMove[]=miniMaxAlgorithm(allStates[i],deep+1,true,i+1, alpha, beta);
-//                    if(nextMove[0]<minScore[0]);
-//                    {
-//                        minScore[0]=nextMove[0];
-//                        minScore[1]=i+1;
-//                    }
-//                }
-//                if(alpha[0]>=beta[0])
-//                    break;
-//                    
-//            }
-//            return minScore;
-//        }
-//    }
-
-public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int move,int [] alpha, int [] beta, int maxDepth,long startT )
+//Satsar på B i betyg
+public int[] miniMaxAlgorithm(GameState clone,int deep,boolean maxPlayer, int move,int [] alpha, int [] beta, int maxDepth,long startT )  //Satsar på B i betyg
     {
         
         if(deep==maxDepth||clone.gameEnded())           //Stopcondision 1: om sökningen har nått maxdjupet eller att spelet är över 
